@@ -13,22 +13,39 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
-  Stack, // Import Stack component from MUI
+  Stack,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import { logout } from "./actions/auth";
 import { useState } from "react";
 
-function Header({ onLogout, drawerOpen, toggleDrawer, isLoginPage }) {
+function Header({ onLogout, drawerOpen, toggleDrawer, isLoginPage, isMobile }) {
   const menuItems = (
     <>
-      <Button color="inherit" component={Link} href="/dashboard">
+      <Button
+        color="inherit"
+        component={Link}
+        href="/dashboard"
+        onClick={isMobile ? toggleDrawer : undefined}
+      >
         Search
       </Button>
-      <Button color="inherit" component={Link} href="/favorites">
+      <Button
+        color="inherit"
+        component={Link}
+        href="/favorites"
+        onClick={isMobile ? toggleDrawer : undefined}
+      >
         Favorites
       </Button>
-      <Button color="inherit" onClick={onLogout}>
+      <Button
+        color="inherit"
+        onClick={() => {
+          onLogout();
+          if (isMobile) toggleDrawer();
+        }}
+      >
         Logout
       </Button>
     </>
@@ -65,9 +82,36 @@ function Header({ onLogout, drawerOpen, toggleDrawer, isLoginPage }) {
       </Toolbar>
 
       {/* Drawer for Mobile Navigation */}
-      <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        sx={{
+          width: "250px",
+          "& .MuiDrawer-paper": {
+            width: "250px",
+            maxWidth: "250px",
+            padding: "20px",
+            position: "relative",
+          },
+        }}
+      >
+        {/* Close button */}
+        <IconButton
+          onClick={toggleDrawer}
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            color: "gray",
+            zIndex: 1300,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+
         {/* Stack menu items vertically in the drawer */}
-        <Stack direction="column" spacing={2} sx={{ width: 250, padding: 20 }}>
+        <Stack direction="column" spacing={2}>
           {!isLoginPage && menuItems}
         </Stack>
       </Drawer>
@@ -80,9 +124,8 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Get theme and media query for responsive design
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Check if screen is mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleLogout = async () => {
     await logout();
@@ -90,7 +133,7 @@ export default function RootLayout({ children }) {
   };
 
   const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen); // Toggle drawer visibility
+    setDrawerOpen(!drawerOpen);
   };
 
   // Check if the current page is the homepage ("/")
@@ -105,7 +148,8 @@ export default function RootLayout({ children }) {
           onLogout={handleLogout}
           drawerOpen={drawerOpen}
           toggleDrawer={toggleDrawer}
-          isLoginPage={isLoginPage} // Pass `isLoginPage` to the Header
+          isLoginPage={isLoginPage}
+          isMobile={isMobile}
         />
 
         {/* Only display the children without layout when on the root page */}

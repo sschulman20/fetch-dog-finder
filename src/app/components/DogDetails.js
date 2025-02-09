@@ -45,7 +45,6 @@ export default function DogDetails({
 
   return (
     <div>
-      {/* Favorite Link with Button */}
       {favoriteCount > 0 ? (
         <Typography variant="h6" sx={{ marginBottom: "16px" }}>
           <Button
