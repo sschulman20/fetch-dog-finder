@@ -87,10 +87,7 @@ function Header({ onLogout, drawerOpen, toggleDrawer, isLoginPage, isMobile }) {
         open={drawerOpen}
         onClose={toggleDrawer}
         sx={{
-          width: "250px",
           "& .MuiDrawer-paper": {
-            width: "250px",
-            maxWidth: "250px",
             padding: "20px",
             position: "relative",
           },
