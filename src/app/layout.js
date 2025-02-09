@@ -141,7 +141,9 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <head></head>
+      <head>
+        <title>Fetch Dog Finder</title>
+      </head>
       <body>
         {/* Pass the handleLogout function and drawer state to Header */}
         <Header
