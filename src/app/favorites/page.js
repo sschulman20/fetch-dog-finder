@@ -96,7 +96,7 @@ export default function Favorites() {
 
           {/* Render "Find My Match" button only if favorites exist */}
           {favorites.length > 0 && (
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ marginTop: "24px" }}>
               <Button
                 variant="contained"
                 color="primary"

@@ -8,11 +8,17 @@ import {
   Button,
   IconButton,
   Link,
+  Typography,
+  Chip,
 } from "@mui/material";
-import { ZoomIn, Star, StarOutline } from "@mui/icons-material";
+import { ZoomIn, Star, StarOutline, Favorite } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
-export default function DogDetails({ dogDetails, favorites, toggleFavorite }) {
+export default function DogDetails({
+  dogDetails = [],
+  favorites,
+  toggleFavorite,
+}) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedDogName, setSelectedDogName] = useState(null);
@@ -39,101 +45,34 @@ export default function DogDetails({ dogDetails, favorites, toggleFavorite }) {
 
   return (
     <div>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginBottom: "20px",
-        }}
-      >
-        <thead>
-          <tr style={{ backgroundColor: "#e0f7fa" }}>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              Image
-            </th>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              Name
-            </th>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              Age
-            </th>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              Breed
-            </th>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              Zip Code
-            </th>
-            <th
-              style={{
-                padding: "8px",
-                textAlign: "left",
-                fontFamily: "Roboto, sans-serif",
-              }}
-            >
-              {favoriteCount > 0 ? (
-                <Link
-                  href="/favorites"
-                  style={{ color: "blue", textDecoration: "underline" }}
-                >
-                  Favorites ({favoriteCount})
-                </Link>
-              ) : (
-                "Favorite"
-              )}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {dogDetails.map((dog) => (
-            <tr key={dog.id}>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  position: "relative",
-                  cursor: "pointer",
-                }}
+      {/* Favorite Link with Button */}
+      {favoriteCount > 0 ? (
+        <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => router.push("/favorites")}
+            startIcon={<Favorite />}
+          >
+            Favorites ({favoriteCount})
+          </Button>
+        </Typography>
+      ) : (
+        <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+          No favorites yet
+        </Typography>
+      )}
+
+      {/* Dog Cards */}
+      <div className="dog-cards">
+        {dogDetails.length > 0 ? (
+          dogDetails.map((dog) => (
+            <div key={dog.id} className="dog-card">
+              <div
+                className="dog-card-image"
                 onClick={() => handleImageClick(dog.img, dog.name)}
               >
-                <img
-                  src={dog.img}
-                  alt={dog.name}
-                  style={{
-                    width: "100px",
-                    height: "auto",
-                    cursor: "zoom-in",
-                  }}
-                />
+                <img src={dog.img} alt={dog.name} className="dog-image" />
                 <IconButton
                   style={{
                     position: "absolute",
@@ -145,60 +84,26 @@ export default function DogDetails({ dogDetails, favorites, toggleFavorite }) {
                 >
                   <ZoomIn />
                 </IconButton>
-              </td>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  fontFamily: "Roboto, sans-serif",
-                }}
-              >
-                {dog.name}
-              </td>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  fontFamily: "Roboto, sans-serif",
-                }}
-              >
-                {dog.age}
-              </td>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  fontFamily: "Roboto, sans-serif",
-                }}
-              >
-                {dog.breed}
-              </td>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  fontFamily: "Roboto, sans-serif",
-                }}
-              >
-                {dog.zip_code}
-              </td>
-              <td
-                style={{
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  fontFamily: "Roboto, sans-serif",
-                }}
-              >
+              </div>
+              <div className="dog-card-info">
+                <Typography variant="h6">{dog.name}</Typography>
+                <Typography variant="body2">Age: {dog.age}</Typography>
+                <Typography variant="body2">Breed: {dog.breed}</Typography>
+                <Typography variant="body2">
+                  Zip Code: {dog.zip_code}
+                </Typography>
                 <IconButton onClick={() => toggleFavorite(dog.id)}>
                   {safeFavorites.includes(dog.id) ? <Star /> : <StarOutline />}
                 </IconButton>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          ))
+        ) : (
+          <Typography variant="h6">No dogs found</Typography>
+        )}
+      </div>
 
-      {/* Dog Imag Dialog */}
+      {/* Dog Image Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>{selectedDogName}</DialogTitle>
         <DialogContent>
@@ -214,6 +119,72 @@ export default function DogDetails({ dogDetails, favorites, toggleFavorite }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <style jsx>{`
+        .dog-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 16px;
+        }
+
+        .dog-card {
+          background-color: #f9f9f9;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          position: relative;
+        }
+
+        .dog-card-image {
+          position: relative;
+          width: 250px;
+          height: 250px;
+          overflow: hidden;
+          display: flex; /* Use flexbox for centering */
+          justify-content: center; /* Center horizontally */
+          align-items: center; /* Center vertically */
+        }
+
+        .dog-card-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .dog-card-info {
+          padding: 16px;
+        }
+
+        .dog-card-info h6 {
+          margin: 8px 0;
+        }
+
+        .dog-card-info p {
+          margin: 4px 0;
+        }
+
+        /* Center content for xs */
+        @media (max-width: 600px) {
+          .dog-cards {
+            grid-template-columns: 1fr;
+          }
+
+          .dog-card-info {
+            padding: 8px;
+            text-align: center; /* Centers text */
+          }
+
+          .dog-card-image {
+            width: 100%; /* Make the image container take full width on mobile */
+            height: auto; /* Let the height adjust based on aspect ratio */
+          }
+
+          .dog-card-image img {
+            max-width: 100%; /* Ensure the image scales correctly */
+            height: auto; /* Maintain aspect ratio */
+          }
+        }
+      `}</style>
     </div>
   );
 }

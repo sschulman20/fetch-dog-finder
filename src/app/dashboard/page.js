@@ -165,9 +165,9 @@ export default function Dashboard() {
       </Typography>
       <form onSubmit={handleSearchSubmit}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
           spacing={2}
-          alignItems="flex-end"
+          alignItems={{ xs: "flex-start", sm: "flex-end" }}
           sx={{ marginBottom: "24px" }}
         >
           <div>
@@ -230,7 +230,7 @@ export default function Dashboard() {
         color="primary"
         showFirstButton
         showLastButton
-        siblingCount={2}
+        siblingCount={{ xs: 1, sm: 2 }}
         sx={{ marginBottom: "24px" }}
       />
 
@@ -250,7 +250,8 @@ export default function Dashboard() {
         color="primary"
         showFirstButton
         showLastButton
-        siblingCount={2}
+        siblingCount={{ xs: 1, sm: 2 }}
+        sx={{ marginTop: "24px" }}
       />
     </main>
   );
